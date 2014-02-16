@@ -8,4 +8,9 @@
 location /info {
     nginx_info;
 }
+
+location /info_json {
+    nginx_info;
+    nginx_info_format json;
+}
 ```
