@@ -13,9 +13,42 @@ typedef enum ngx_http_info_key {
     NGX_HTTP_INFO_KEY_VERSION = 0,
     NGX_HTTP_INFO_KEY_PREFIX,
     NGX_HTTP_INFO_KEY_CONF_PREFIX,
+#ifdef NGX_SBIN_PATH
+    NGX_HTTP_INFO_KEY_SBIN_PATH,
+#endif /* NGX_SBIN_PATH */
+#ifdef NGX_CONF_PATH
+    NGX_HTTP_INFO_KEY_CONF_PATH,
+#endif /* NGX_CONF_PATH */
+#ifdef NGX_ERROR_LOG_PATH
+    NGX_HTTP_INFO_KEY_ERROR_LOG_PATH,
+#endif /* NGX_ERROR_LOG_PATH */
+#ifdef NGX_PID_PATH
+    NGX_HTTP_INFO_KEY_PID_PATH,
+#endif /* NGX_PID_PATH */
+#ifdef NGX_LOCK_PATH
+    NGX_HTTP_INFO_KEY_LOCK_PATH,
+#endif /* NGX_LOCK_PATH */
+#ifdef NGX_HTTP_LOG_PATH
+    NGX_HTTP_INFO_KEY_HTTP_LOG_PATH,
+#endif /* NGX_HTTP_LOG_PATH */
+#ifdef NGX_HTTP_CLIENT_TEMP_PATH
+    NGX_HTTP_INFO_KEY_HTTP_CLIENT_TEMP_PATH,
+#endif /* NGX_HTTP_CLIENT_TEMP_PATH */
+#ifdef NGX_HTTP_PROXY_TEMP_PATH
+    NGX_HTTP_INFO_KEY_HTTP_PROXY_TEMP_PATH,
+#endif /* NGX_HTTP_PROXY_TEMP_PATH */
+#ifdef NGX_HTTP_FASTCGI_TEMP_PATH
+    NGX_HTTP_INFO_KEY_HTTP_FASTCGI_TEMP_PATH,
+#endif /* NGX_HTTP_FASTCGI_TEMP_PATH */
+#ifdef NGX_HTTP_UWSGI_TEMP_PATH
+    NGX_HTTP_INFO_KEY_HTTP_UWSGI_TEMP_PATH,
+#endif /* NGX_HTTP_UWSGI_TEMP_PATH */
+#ifdef NGX_HTTP_SCGI_TEMP_PATH
+    NGX_HTTP_INFO_KEY_HTTP_SCGI_TEMP_PATH,
+#endif /* NGX_HTTP_SCGI_TEMP_PATH */
 #ifdef NGX_COMPILER
     NGX_HTTP_INFO_KEY_BUILT_COMPILER,
-#endif
+#endif /* NGX_COMPILER */
     NGX_HTTP_INFO_KEY_CONFIGURE_ARGUMENTS,
     NGX_HTTP_INFO_KEY_MAX
 } ngx_http_info_key;
@@ -24,6 +57,39 @@ ngx_str_t ngx_http_info_keys[NGX_HTTP_INFO_KEY_MAX] = {
     ngx_string("nginx-version"),
     ngx_string("prefix-path"),
     ngx_string("conf-prefix-path"),
+#ifdef NGX_SBIN_PATH
+    ngx_string("sbin-path"),
+#endif /* NGX_SBIN_PATH */
+#ifdef NGX_CONF_PATH
+    ngx_string("conf-path"),
+#endif /* NGX_CONF_PATH */
+#ifdef NGX_ERROR_LOG_PATH
+    ngx_string("error-log-path"),
+#endif /* NGX_ERROR_LOG_PATH */
+#ifdef NGX_PID_PATH
+    ngx_string("pid-path"),
+#endif /* NGX_PID_PATH */
+#ifdef NGX_LOCK_PATH
+    ngx_string("lock-path"),
+#endif /* NGX_LOCK_PATH */
+#ifdef NGX_HTTP_LOG_PATH
+    ngx_string("http-log-path"),
+#endif /* NGX_HTTP_LOG_PATH */
+#ifdef NGX_HTTP_CLIENT_TEMP_PATH
+    ngx_string("http-client-body-temp-path"),
+#endif /* NGX_HTTP_CLIENT_TEMP_PATH */
+#ifdef NGX_HTTP_PROXY_TEMP_PATH
+    ngx_string("http-proxy-temp-path"),
+#endif /* NGX_HTTP_PROXY_TEMP_PATH */
+#ifdef NGX_HTTP_FASTCGI_TEMP_PATH
+    ngx_string("http-fastcgi-temp-path"),
+#endif /* NGX_HTTP_FASTCGI_TEMP_PATH */
+#ifdef NGX_HTTP_UWSGI_TEMP_PATH
+    ngx_string("http-uwsgi-temp-path"),
+#endif /* NGX_HTTP_UWSGI_TEMP_PATH */
+#ifdef NGX_HTTP_SCGI_TEMP_PATH
+    ngx_string("http-scgi-temp-path"),
+#endif /* NGX_HTTP_SCGI_TEMP_PATH */
 #ifdef NGX_COMPILER
     ngx_string("built-compiler"),
 #endif
@@ -123,13 +189,90 @@ static void ngx_http_info_build_response(ngx_http_info_main_conf_t *imcf)
             val.len  = ngx_cycle->conf_prefix.len;
             rbuf = ngx_http_info_build_response_item(rbuf, key, &val);
             break;
+#ifdef NGX_SBIN_PATH
+        case NGX_HTTP_INFO_KEY_SBIN_PATH:
+            val.data = (u_char *)NGX_SBIN_PATH;
+            val.len  = sizeof(NGX_SBIN_PATH) - 1;
+            rbuf = ngx_http_info_build_response_item(rbuf, key, &val);
+            break;
+#endif /* NGX_SBIN_PATH */
+#ifdef NGX_CONF_PATH
+        case NGX_HTTP_INFO_KEY_CONF_PATH:
+            val.data = (u_char *)NGX_CONF_PATH;
+            val.len  = sizeof(NGX_CONF_PATH) - 1;
+            rbuf = ngx_http_info_build_response_item(rbuf, key, &val);
+            break;
+#endif /* NGX_CONF_PATH */
+#ifdef NGX_ERROR_LOG_PATH
+        case NGX_HTTP_INFO_KEY_ERROR_LOG_PATH:
+            val.data = (u_char *)NGX_ERROR_LOG_PATH;
+            val.len  = sizeof(NGX_ERROR_LOG_PATH) - 1;
+            rbuf = ngx_http_info_build_response_item(rbuf, key, &val);
+            break;
+#endif /* NGX_ERROR_LOG_PATH */
+#ifdef NGX_PID_PATH
+        case NGX_HTTP_INFO_KEY_PID_PATH:
+            val.data = (u_char *)NGX_PID_PATH;
+            val.len  = sizeof(NGX_PID_PATH) - 1;
+            rbuf = ngx_http_info_build_response_item(rbuf, key, &val);
+            break;
+#endif /* NGX_ */
+#ifdef NGX_LOCK_PATH
+        case NGX_HTTP_INFO_KEY_LOCK_PATH:
+            val.data = (u_char *)NGX_LOCK_PATH;
+            val.len  = sizeof(NGX_LOCK_PATH) - 1;
+            rbuf = ngx_http_info_build_response_item(rbuf, key, &val);
+            break;
+#endif /* NGX_LOCK_PATH */
+#ifdef NGX_HTTP_LOG_PATH
+        case NGX_HTTP_INFO_KEY_HTTP_LOG_PATH:
+            val.data = (u_char *)NGX_HTTP_LOG_PATH;
+            val.len  = sizeof(NGX_HTTP_LOG_PATH) - 1;
+            rbuf = ngx_http_info_build_response_item(rbuf, key, &val);
+            break;
+#endif /* NGX_HTTP_LOG_PATH */
+#ifdef NGX_HTTP_CLIENT_TEMP_PATH
+        case NGX_HTTP_INFO_KEY_HTTP_CLIENT_TEMP_PATH:
+            val.data = (u_char *)NGX_HTTP_CLIENT_TEMP_PATH;
+            val.len  = sizeof(NGX_HTTP_CLIENT_TEMP_PATH) - 1;
+            rbuf = ngx_http_info_build_response_item(rbuf, key, &val);
+            break;
+#endif /* NGX_HTTP_CLIENT_TEMP_PATH */
+#ifdef NGX_HTTP_PROXY_TEMP_PATH
+        case NGX_HTTP_INFO_KEY_HTTP_PROXY_TEMP_PATH:
+            val.data = (u_char *)NGX_HTTP_PROXY_TEMP_PATH;
+            val.len  = sizeof(NGX_HTTP_PROXY_TEMP_PATH) - 1;
+            rbuf = ngx_http_info_build_response_item(rbuf, key, &val);
+            break;
+#endif /* NGX_HTTP_PROXY_TEMP_PATH */
+#ifdef NGX_HTTP_FASTCGI_TEMP_PATH
+        case NGX_HTTP_INFO_KEY_HTTP_FASTCGI_TEMP_PATH:
+            val.data = (u_char *)NGX_HTTP_FASTCGI_TEMP_PATH;
+            val.len  = sizeof(NGX_HTTP_FASTCGI_TEMP_PATH) - 1;
+            rbuf = ngx_http_info_build_response_item(rbuf, key, &val);
+            break;
+#endif /* NGX_HTTP_FASTCGI_TEMP_PATH */
+#ifdef NGX_HTTP_UWSGI_TEMP_PATH
+        case NGX_HTTP_INFO_KEY_HTTP_UWSGI_TEMP_PATH:
+            val.data = (u_char *)NGX_HTTP_UWSGI_TEMP_PATH;
+            val.len  = sizeof(NGX_HTTP_UWSGI_TEMP_PATH) - 1;
+            rbuf = ngx_http_info_build_response_item(rbuf, key, &val);
+            break;
+#endif /* NGX_HTTP_UWSGI_TEMP_PATH */
+#ifdef NGX_HTTP_SCGI_TEMP_PATH
+        case NGX_HTTP_INFO_KEY_HTTP_SCGI_TEMP_PATH:
+            val.data = (u_char *)NGX_HTTP_SCGI_TEMP_PATH;
+            val.len  = sizeof(NGX_HTTP_SCGI_TEMP_PATH) - 1;
+            rbuf = ngx_http_info_build_response_item(rbuf, key, &val);
+            break;
+#endif /* NGX_HTTP_SCGI_TEMP_PATH */
 #ifdef NGX_COMPILER
         case NGX_HTTP_INFO_KEY_BUILT_COMPILER:
             val.data = (u_char *)NGX_COMPILER;
             val.len  = sizeof(NGX_COMPILER) - 1;
             rbuf = ngx_http_info_build_response_item(rbuf, key, &val);
             break;
-#endif
+#endif /* NGX_COMPILER */
         case NGX_HTTP_INFO_KEY_CONFIGURE_ARGUMENTS:
             val.data = (u_char *)NGX_CONFIGURE;
             val.len  = sizeof(NGX_CONFIGURE) - 1;
