@@ -163,9 +163,9 @@ static u_char *ngx_http_info_build_response_item(u_char *rbuf, const ngx_str_t *
 
 static void ngx_http_info_build_response(ngx_http_info_main_conf_t *imcf)
 {
-    ngx_int_t i, c;
-    size_t rlen;
-    u_char *rbuf;
+    ngx_int_t  i, c;
+    size_t     rlen;
+    u_char    *rbuf;
     ngx_str_t *key, val;
     
     rbuf = imcf->response.data;
@@ -339,10 +339,10 @@ static char *ngx_http_info(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 
 static ngx_int_t ngx_http_info_handler(ngx_http_request_t *r)
 {
-    ngx_int_t    rc;
-    ngx_chain_t  out;
-    ngx_buf_t   *b;
     ngx_http_info_main_conf_t *imcf;
+    ngx_int_t                  rc;
+    ngx_chain_t                out;
+    ngx_buf_t                 *b;
 
     if (r->method != NGX_HTTP_GET && r->method != NGX_HTTP_HEAD) {
         return NGX_HTTP_NOT_ALLOWED;
