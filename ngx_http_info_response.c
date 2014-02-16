@@ -2,6 +2,7 @@
 #include "ngx_http_info_common.h"
 
 extern ngx_str_t ngx_http_info_keys[NGX_HTTP_INFO_KEY_MAX];
+
 static u_char *ngx_http_info_build_response_item(u_char *rbuf, const ngx_str_t *key, ngx_str_t *val);
 
 static u_char *ngx_http_info_build_response_item(u_char *rbuf, const ngx_str_t *key, ngx_str_t *val)
@@ -118,6 +119,16 @@ void ngx_http_info_build_response(ngx_str_t *response)
             rbuf = ngx_http_info_build_response_item(rbuf, key, &val);
             break;
 #endif /* NGX_HTTP_SCGI_TEMP_PATH */
+        case NGX_HTTP_INFO_KEY_PCRE_ENABLED:
+#ifdef NGX_PCRE
+            val.data = (u_char *)"yes";
+            val.len  = sizeof("yes") - 1;
+#else
+            val.data = (u_char *)"no";
+            val.len  = (u_char *)"no";
+#endif /* NGX_PCRE */
+            rbuf = ngx_http_info_build_response_item(rbuf, key, &val);
+            break;
 #ifdef NGX_COMPILER
         case NGX_HTTP_INFO_KEY_BUILT_COMPILER:
             val.data = (u_char *)NGX_COMPILER;
