@@ -6,10 +6,11 @@
 #include <ngx_core.h>
 #include <ngx_http.h>
 
-typedef struct ngx_http_info_main_conf_t {
-    ngx_str_t response;
-    size_t response_buffer_size;
-} ngx_http_info_main_conf_t;
+typedef enum ngx_http_info_response_format_t {
+    NGX_HTTP_INFO_RESPONSE_FORMAT_TEXT = 0,
+    NGX_HTTP_INFO_RESPONSE_FORMAT_JSON,
+    NGX_HTTP_INFO_RESPONSE_FORMAT_MAX
+} ngx_http_info_response_format_t;
 
 
 typedef enum ngx_http_info_key_t {
@@ -59,5 +60,17 @@ typedef enum ngx_http_info_key_t {
     NGX_HTTP_INFO_KEY_CONFIGURE_ARGUMENTS,
     NGX_HTTP_INFO_KEY_MAX
 } ngx_http_info_key_t;
+
+
+typedef struct ngx_http_info_main_conf_t {
+    ngx_str_t response[NGX_HTTP_INFO_RESPONSE_FORMAT_MAX];
+    size_t response_buffer_size;
+} ngx_http_info_main_conf_t;
+
+
+typedef struct ngx_http_info_loc_conf_t {
+    ngx_uint_t response_format;
+} ngx_http_info_loc_conf_t;
+
 
 #endif /* NGX_HTTP_INFO_COMMON_H */

@@ -5,6 +5,8 @@ extern ngx_str_t ngx_http_info_keys[NGX_HTTP_INFO_KEY_MAX];
 
 static u_char *ngx_http_info_build_response_text_item(u_char *rbuf, const ngx_str_t *key, ngx_str_t *val);
 static u_char *ngx_http_info_build_response_json_item(u_char *rbuf, const ngx_str_t *key, ngx_str_t *val);
+static u_char *ngx_http_info_build_response_json_start(u_char *rbuf);
+static u_char *ngx_http_info_build_response_json_end(u_char *rbuf);
 static size_t ngx_http_info_text_item_length(ngx_str_t *key, ngx_str_t *val);
 static size_t ngx_http_info_json_item_length(ngx_str_t *key, ngx_str_t *val);
 
@@ -20,11 +22,23 @@ static u_char *ngx_http_info_build_response_text_item(u_char *rbuf, const ngx_st
 static u_char *ngx_http_info_build_response_json_item(u_char *rbuf, const ngx_str_t *key, ngx_str_t *val)
 {
     rbuf = ngx_cpystrn(rbuf, key->data, key->len + 1);
-    rbuf = ngx_cpystrn(rbuf, (u_char *)":",  (sizeof(":") - 1) + 1);
+    rbuf = ngx_cpystrn(rbuf, (u_char *)":",  (sizeof(":")  - 1) + 1);
     rbuf = ngx_cpystrn(rbuf, (u_char *)"\"", (sizeof("\"") - 1) + 1);
     rbuf = ngx_cpystrn(rbuf, val->data, val->len + 1);
     rbuf = ngx_cpystrn(rbuf, (u_char *)"\"", (sizeof("\"") - 1) + 1);
     rbuf = ngx_cpystrn(rbuf, (u_char *)"\n", (sizeof("\n") - 1) + 1);
+    return rbuf;
+}
+
+static u_char *ngx_http_info_build_response_json_start(u_char *rbuf)
+{
+    rbuf = ngx_cpystrn(rbuf, (u_char *)"{\n", (sizeof("{\n") - 1) + 1);
+    return rbuf;
+}
+
+static u_char *ngx_http_info_build_response_json_end(u_char *rbuf)
+{
+    rbuf = ngx_cpystrn(rbuf, (u_char *)"}\n", (sizeof("}\n") - 1) + 1);
     return rbuf;
 }
 
@@ -48,15 +62,32 @@ static size_t ngx_http_info_json_item_length(ngx_str_t *key, ngx_str_t *val)
         ;
 }
 
-ngx_int_t ngx_http_info_build_response(ngx_str_t *response, size_t response_buffer_size)
+ngx_int_t ngx_http_info_build_response(ngx_str_t *response, ngx_http_info_response_format_t response_format, size_t response_buffer_size)
 {
     ngx_int_t  i, c;
     size_t     rlen, ilen;
     u_char    *rbuf;
     ngx_str_t *key, val;
-    
+    u_char    *(*item_build_func)(u_char *rbuf, const ngx_str_t *key, ngx_str_t *val);
+    size_t     (*item_length_func)(ngx_str_t *key, ngx_str_t *val);
+
     rbuf = response->data;
     rlen = 0;
+
+    switch (response_format) {
+    case NGX_HTTP_INFO_RESPONSE_FORMAT_JSON:
+        item_build_func  = ngx_http_info_build_response_json_item;
+        item_length_func = ngx_http_info_json_item_length;
+        rbuf = ngx_http_info_build_response_json_start(rbuf);
+        rlen += sizeof("{\n") - 1;
+        break;
+    case NGX_HTTP_INFO_RESPONSE_FORMAT_TEXT:
+    default:
+        item_build_func  = ngx_http_info_build_response_text_item;
+        item_length_func = ngx_http_info_text_item_length;
+        break;
+    }
+
     c = sizeof(ngx_http_info_keys) / sizeof(ngx_str_t);
     for (i=0;i<c;i++) {
         key = &ngx_http_info_keys[i];
@@ -140,7 +171,6 @@ ngx_int_t ngx_http_info_build_response(ngx_str_t *response, size_t response_buff
 #else
             ngx_str_set(&val, "no");
 #endif /* NGX_HAVE_PCRE_JIT */
-            rbuf = ngx_http_info_build_response_text_item(rbuf, key, &val);
             break;
         case NGX_HTTP_INFO_KEY_SSL_ENABLED:
 #if NGX_SSL
@@ -169,15 +199,19 @@ ngx_int_t ngx_http_info_build_response(ngx_str_t *response, size_t response_buff
             break;
         }
 
-        ilen = ngx_http_info_text_item_length(key, &val);
+        ilen = item_length_func(key, &val);
 
         if (rlen + ilen > response_buffer_size) {
-            response->len = rlen;
             return NGX_ERROR;
         }
 
-        rbuf = ngx_http_info_build_response_text_item(rbuf, key, &val);
+        rbuf = item_build_func(rbuf, key, &val);
         rlen += ilen;
+    }
+
+    if (response_format == NGX_HTTP_INFO_RESPONSE_FORMAT_JSON) {
+        rbuf = ngx_http_info_build_response_json_end(rbuf);
+        rlen += sizeof("}\n") - 1;
     }
 
     response->len = rlen;
