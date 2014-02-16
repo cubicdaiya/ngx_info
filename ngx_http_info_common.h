@@ -1,0 +1,59 @@
+#ifndef NGX_HTTP_COMMON_MODULE_H
+#define NGX_HTTP_COMMON_MODULE_H
+
+#include <nginx.h>
+#include <ngx_config.h>
+#include <ngx_core.h>
+#include <ngx_http.h>
+
+typedef struct ngx_http_info_main_conf_t {
+    ngx_str_t response;
+    size_t response_buffer_size;
+} ngx_http_info_main_conf_t;
+
+
+typedef enum ngx_http_info_key {
+    NGX_HTTP_INFO_KEY_VERSION = 0,
+    NGX_HTTP_INFO_KEY_PREFIX,
+    NGX_HTTP_INFO_KEY_CONF_PREFIX,
+#ifdef NGX_SBIN_PATH
+    NGX_HTTP_INFO_KEY_SBIN_PATH,
+#endif /* NGX_SBIN_PATH */
+#ifdef NGX_CONF_PATH
+    NGX_HTTP_INFO_KEY_CONF_PATH,
+#endif /* NGX_CONF_PATH */
+#ifdef NGX_ERROR_LOG_PATH
+    NGX_HTTP_INFO_KEY_ERROR_LOG_PATH,
+#endif /* NGX_ERROR_LOG_PATH */
+#ifdef NGX_PID_PATH
+    NGX_HTTP_INFO_KEY_PID_PATH,
+#endif /* NGX_PID_PATH */
+#ifdef NGX_LOCK_PATH
+    NGX_HTTP_INFO_KEY_LOCK_PATH,
+#endif /* NGX_LOCK_PATH */
+#ifdef NGX_HTTP_LOG_PATH
+    NGX_HTTP_INFO_KEY_HTTP_LOG_PATH,
+#endif /* NGX_HTTP_LOG_PATH */
+#ifdef NGX_HTTP_CLIENT_TEMP_PATH
+    NGX_HTTP_INFO_KEY_HTTP_CLIENT_TEMP_PATH,
+#endif /* NGX_HTTP_CLIENT_TEMP_PATH */
+#ifdef NGX_HTTP_PROXY_TEMP_PATH
+    NGX_HTTP_INFO_KEY_HTTP_PROXY_TEMP_PATH,
+#endif /* NGX_HTTP_PROXY_TEMP_PATH */
+#ifdef NGX_HTTP_FASTCGI_TEMP_PATH
+    NGX_HTTP_INFO_KEY_HTTP_FASTCGI_TEMP_PATH,
+#endif /* NGX_HTTP_FASTCGI_TEMP_PATH */
+#ifdef NGX_HTTP_UWSGI_TEMP_PATH
+    NGX_HTTP_INFO_KEY_HTTP_UWSGI_TEMP_PATH,
+#endif /* NGX_HTTP_UWSGI_TEMP_PATH */
+#ifdef NGX_HTTP_SCGI_TEMP_PATH
+    NGX_HTTP_INFO_KEY_HTTP_SCGI_TEMP_PATH,
+#endif /* NGX_HTTP_SCGI_TEMP_PATH */
+#ifdef NGX_COMPILER
+    NGX_HTTP_INFO_KEY_BUILT_COMPILER,
+#endif /* NGX_COMPILER */
+    NGX_HTTP_INFO_KEY_CONFIGURE_ARGUMENTS,
+    NGX_HTTP_INFO_KEY_MAX
+} ngx_http_info_key;
+
+#endif /* NGX_HTTP_INFO_COMMON_H */
