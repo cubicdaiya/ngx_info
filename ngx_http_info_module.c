@@ -75,6 +75,7 @@ static void *ngx_http_info_create_main_conf(ngx_conf_t *cf)
 static char *ngx_http_info_init_main_conf(ngx_conf_t *cf, void *conf)
 {
     ngx_http_info_main_conf_t *imcf;
+    ngx_int_t rc;
 
     imcf = ngx_http_conf_get_module_main_conf(cf, ngx_http_info_module);
 
@@ -87,7 +88,10 @@ static char *ngx_http_info_init_main_conf(ngx_conf_t *cf, void *conf)
         return NGX_CONF_ERROR;
     }
 
-    ngx_http_info_build_response(&imcf->response);
+    rc = ngx_http_info_build_response(&imcf->response, imcf->response_buffer_size);
+    if (rc != NGX_OK) {
+        return "nginx_info_buffer is not enough";
+    }
 
     return NGX_CONF_OK;
 }
