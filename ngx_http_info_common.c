@@ -41,6 +41,7 @@ ngx_str_t ngx_http_info_keys[NGX_HTTP_INFO_KEY_MAX] = {
     ngx_string("pcre-enabled"),
     ngx_string("pcre-jit-enabled"),
     ngx_string("ssl-enabled"),
+    ngx_string("zlib-enabled"),
 #ifdef NGX_COMPILER
     ngx_string("built-compiler"),
 #endif
