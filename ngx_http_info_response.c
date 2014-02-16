@@ -123,6 +123,14 @@ void ngx_http_info_build_response(ngx_str_t *response)
 #endif /* NGX_HAVE_PCRE_JIT */
             rbuf = ngx_http_info_build_response_item(rbuf, key, &val);
             break;
+        case NGX_HTTP_INFO_KEY_SSL_ENABLED:
+#if NGX_SSL
+            ngx_str_set(&val, "yes");
+#else
+            ngx_str_set(&val, "no");
+#endif /* NGX_SSL */
+            rbuf = ngx_http_info_build_response_item(rbuf, key, &val);
+            break;
 #ifdef NGX_COMPILER
         case NGX_HTTP_INFO_KEY_BUILT_COMPILER:
             ngx_str_set(&val, NGX_COMPILER);

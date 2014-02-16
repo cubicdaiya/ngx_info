@@ -40,6 +40,7 @@ ngx_str_t ngx_http_info_keys[NGX_HTTP_INFO_KEY_MAX] = {
 #endif /* NGX_HTTP_SCGI_TEMP_PATH */
     ngx_string("pcre-enabled"),
     ngx_string("pcre-jit-enabled"),
+    ngx_string("ssl-enabled"),
 #ifdef NGX_COMPILER
     ngx_string("built-compiler"),
 #endif
