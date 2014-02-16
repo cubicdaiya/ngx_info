@@ -4,10 +4,10 @@
 #include <ngx_core.h>
 #include <ngx_http.h>
 
-typedef struct ngx_http_info_conf_t {
+typedef struct ngx_http_info_main_conf_t {
     ngx_str_t response;
-    size_t response_limit;
-} ngx_http_info_conf_t;
+    size_t response_buffer_size;
+} ngx_http_info_main_conf_t;
 
 typedef enum ngx_http_info_key {
     NGX_HTTP_INFO_KEY_VERSION = 0,
@@ -44,6 +44,14 @@ static ngx_command_t ngx_http_info_commands[] = {
         0,
         0,
         NULL
+    },
+
+    { ngx_string("nginx_info_buffer"),
+      NGX_HTTP_MAIN_CONF|NGX_CONF_TAKE1,
+      ngx_conf_set_size_slot,
+      NGX_HTTP_MAIN_CONF_OFFSET,
+      offsetof(ngx_http_info_main_conf_t, response_buffer_size),
+      NULL
     },
 
     ngx_null_command
@@ -87,14 +95,14 @@ static u_char *ngx_http_info_build_response_item(u_char *rbuf, const ngx_str_t *
     return rbuf;
 }
 
-static void ngx_http_info_build_response(ngx_http_info_conf_t *icf)
+static void ngx_http_info_build_response(ngx_http_info_main_conf_t *imcf)
 {
     ngx_int_t i, c;
     size_t rlen;
     u_char *rbuf;
     ngx_str_t *key, val;
     
-    rbuf = icf->response.data;
+    rbuf = imcf->response.data;
     rlen = 0;
     c = sizeof(ngx_http_info_keys) / sizeof(ngx_str_t);
     for (i=0;i<c;i++) {
@@ -139,32 +147,39 @@ static void ngx_http_info_build_response(ngx_http_info_conf_t *icf)
             ;
     }
 
-    icf->response.len = rlen;
+    imcf->response.len = rlen;
 }
 
 static void *ngx_http_info_create_main_conf(ngx_conf_t *cf)
 {
-    ngx_http_info_conf_t *icf;
+    ngx_http_info_main_conf_t *imcf;
 
-    icf = ngx_palloc(cf->pool, sizeof(ngx_http_info_conf_t));
-    if (icf == NULL) {
+    imcf = ngx_palloc(cf->pool, sizeof(ngx_http_info_main_conf_t));
+    if (imcf == NULL) {
         return NULL;
     }
 
-    icf->response.data = ngx_palloc(cf->pool, 1024);
-    if (icf == NULL) {
-        return NULL;
-    }
-    return icf;
+    imcf->response_buffer_size = NGX_CONF_UNSET_SIZE;
+    
+    return imcf;
 }
 
 static char *ngx_http_info_init_main_conf(ngx_conf_t *cf, void *conf)
 {
-    ngx_http_info_conf_t *icf;
+    ngx_http_info_main_conf_t *imcf;
 
-    icf = ngx_http_conf_get_module_main_conf(cf, ngx_http_info_module);
+    imcf = ngx_http_conf_get_module_main_conf(cf, ngx_http_info_module);
 
-    ngx_http_info_build_response(icf);
+    if (imcf->response_buffer_size == NGX_CONF_UNSET_SIZE) {
+        imcf->response_buffer_size = 1 * 1024 * 1024;
+    }
+
+    imcf->response.data = ngx_palloc(cf->pool, imcf->response_buffer_size);
+    if (imcf->response.data == NULL) {
+        return NGX_CONF_ERROR;
+    }
+
+    ngx_http_info_build_response(imcf);
 
     return NGX_CONF_OK;
 }
@@ -184,7 +199,7 @@ static ngx_int_t ngx_http_info_handler(ngx_http_request_t *r)
     ngx_int_t    rc;
     ngx_chain_t  out;
     ngx_buf_t   *b;
-    ngx_http_info_conf_t *icf;
+    ngx_http_info_main_conf_t *imcf;
 
     if (r->method != NGX_HTTP_GET && r->method != NGX_HTTP_HEAD) {
         return NGX_HTTP_NOT_ALLOWED;
@@ -195,10 +210,10 @@ static ngx_int_t ngx_http_info_handler(ngx_http_request_t *r)
         return NGX_HTTP_INTERNAL_SERVER_ERROR;
     }
 
-    icf = ngx_http_get_module_main_conf(r, ngx_http_info_module);
+    imcf = ngx_http_get_module_main_conf(r, ngx_http_info_module);
 
-    b->pos      = icf->response.data;
-    b->last     = icf->response.data + icf->response.len;
+    b->pos      = imcf->response.data;
+    b->last     = imcf->response.data + imcf->response.len;
     b->memory   = 1;
     b->last_buf = 1;
     out.buf     = b;
@@ -207,7 +222,7 @@ static ngx_int_t ngx_http_info_handler(ngx_http_request_t *r)
     r->headers_out.content_type.len  = sizeof("text/plain") - 1;
     r->headers_out.content_type.data = (u_char *)"text/plain";
     r->headers_out.status            = NGX_HTTP_OK;
-    r->headers_out.content_length_n  = icf->response.len;
+    r->headers_out.content_length_n  = imcf->response.len;
 
     rc = ngx_http_send_header(r);
     if (rc == NGX_ERROR || rc > NGX_OK || r->header_only) {
