@@ -4,6 +4,8 @@
 
 static void *ngx_http_info_create_main_conf(ngx_conf_t *cf);
 static char *ngx_http_info_init_main_conf(ngx_conf_t *cf, void *conf);
+static void *ngx_http_info_create_loc_conf(ngx_conf_t *cf);
+static char *ngx_http_info_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child);
 static char *ngx_http_info(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
 static ngx_int_t ngx_http_info_handler(ngx_http_request_t *r);
 
@@ -26,6 +28,14 @@ static ngx_command_t ngx_http_info_commands[] = {
       NULL
     },
 
+    { ngx_string("nginx_info_format"),
+      NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_TAKE1,
+      ngx_conf_set_str_slot,
+      NGX_HTTP_LOC_CONF_OFFSET,
+      offsetof(ngx_http_info_loc_conf_t, response_format),
+      NULL
+    },
+
     ngx_null_command
 };
 
@@ -39,8 +49,8 @@ static ngx_http_module_t ngx_http_info_module_ctx = {
     NULL,                              /* create server configuration */
     NULL,                              /* merge server configuration */
 
-    NULL,                              /* create location configuration */
-    NULL                               /* merge location configuration */
+    ngx_http_info_create_loc_conf,     /* create location configuration */
+    ngx_http_info_merge_loc_conf       /* merge location configuration */
 };
 
 ngx_module_t ngx_http_info_module = {
@@ -88,10 +98,35 @@ static char *ngx_http_info_init_main_conf(ngx_conf_t *cf, void *conf)
         return NGX_CONF_ERROR;
     }
 
-    rc = ngx_http_info_build_response(&imcf->response, imcf->response_buffer_size);
+    rc = ngx_http_info_build_response(&imcf->response, 
+                                      imcf->response_buffer_size);
     if (rc != NGX_OK) {
         return "nginx_info_buffer is not enough";
     }
+
+    return NGX_CONF_OK;
+}
+
+static void *ngx_http_info_create_loc_conf(ngx_conf_t *cf)
+{
+    ngx_http_info_loc_conf_t *ilcf;
+
+    ilcf = ngx_pcalloc(cf->pool, sizeof(ngx_http_info_loc_conf_t));
+    if (ilcf == NULL) {
+        return NULL;
+    }
+
+    ngx_str_null(&ilcf->response_format);
+
+    return ilcf;
+}
+
+static char *ngx_http_info_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child)
+{
+    ngx_http_info_loc_conf_t *prev = parent;
+    ngx_http_info_loc_conf_t *conf = child;
+
+    ngx_conf_merge_str_value(conf->response_format, prev->response_format, "text");
 
     return NGX_CONF_OK;
 }

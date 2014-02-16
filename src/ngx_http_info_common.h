@@ -12,7 +12,7 @@ typedef struct ngx_http_info_main_conf_t {
 } ngx_http_info_main_conf_t;
 
 
-typedef enum ngx_http_info_key {
+typedef enum ngx_http_info_key_t {
     NGX_HTTP_INFO_KEY_VERSION = 0,
     NGX_HTTP_INFO_KEY_PREFIX,
     NGX_HTTP_INFO_KEY_CONF_PREFIX,
@@ -58,6 +58,6 @@ typedef enum ngx_http_info_key {
 #endif /* NGX_COMPILER */
     NGX_HTTP_INFO_KEY_CONFIGURE_ARGUMENTS,
     NGX_HTTP_INFO_KEY_MAX
-} ngx_http_info_key;
+} ngx_http_info_key_t;
 
 #endif /* NGX_HTTP_INFO_COMMON_H */
