@@ -21,12 +21,13 @@ static u_char *ngx_http_info_build_response_text_item(u_char *rbuf, const ngx_st
 
 static u_char *ngx_http_info_build_response_json_item(u_char *rbuf, const ngx_str_t *key, ngx_str_t *val)
 {
+    rbuf = ngx_cpystrn(rbuf, (u_char *)"\"", (sizeof("\"") - 1) + 1);
     rbuf = ngx_cpystrn(rbuf, key->data, key->len + 1);
+    rbuf = ngx_cpystrn(rbuf, (u_char *)"\"", (sizeof("\"") - 1) + 1);
     rbuf = ngx_cpystrn(rbuf, (u_char *)":",  (sizeof(":")  - 1) + 1);
     rbuf = ngx_cpystrn(rbuf, (u_char *)"\"", (sizeof("\"") - 1) + 1);
     rbuf = ngx_cpystrn(rbuf, val->data, val->len + 1);
-    rbuf = ngx_cpystrn(rbuf, (u_char *)"\"", (sizeof("\"") - 1) + 1);
-    rbuf = ngx_cpystrn(rbuf, (u_char *)"\n", (sizeof("\n") - 1) + 1);
+    rbuf = ngx_cpystrn(rbuf, (u_char *)"\",\n", (sizeof("\",\n") - 1) + 1);
     return rbuf;
 }
 
@@ -44,7 +45,8 @@ static u_char *ngx_http_info_build_response_json_end(u_char *rbuf)
 
 static size_t ngx_http_info_text_item_length(ngx_str_t *key, ngx_str_t *val)
 {
-    return key->len
+    return 
+          key->len
         + 1 /* ":" */
         + val->len
         + 1 /* LF  */
@@ -53,11 +55,15 @@ static size_t ngx_http_info_text_item_length(ngx_str_t *key, ngx_str_t *val)
 
 static size_t ngx_http_info_json_item_length(ngx_str_t *key, ngx_str_t *val)
 {
-    return key->len
+    return 
+          1 /* "\"" */
+        + key->len
+        + 1 /* "\"" */
         + 1 /* ":"  */
         + 1 /* "\"" */
         + val->len
         + 1 /* "\"" */
+        + 1 /* ","  */
         + 1 /* LF   */
         ;
 }
@@ -210,6 +216,12 @@ ngx_int_t ngx_http_info_build_response(ngx_str_t *response, ngx_http_info_respon
     }
 
     if (response_format == NGX_HTTP_INFO_RESPONSE_FORMAT_JSON) {
+        if (rlen + 1 > response_buffer_size) {
+            return NGX_ERROR;
+        }
+        rbuf -= 2;
+        *rbuf++ = '\n';
+        rlen -= 1;
         rbuf = ngx_http_info_build_response_json_end(rbuf);
         rlen += sizeof("}\n") - 1;
     }
