@@ -52,6 +52,6 @@ ngx_str_t ngx_http_info_keys[NGX_HTTP_INFO_KEY_MAX] = {
     ngx_string("nginx-group"),
 #ifdef NGX_COMPILER
     ngx_string("built-compiler"),
-#endif
+#endif /* NGX_COMPILER */
     ngx_string("configure-arguments")
 };
