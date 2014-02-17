@@ -192,6 +192,36 @@ ngx_int_t ngx_http_info_build_response(ngx_str_t *response, ngx_http_info_respon
             ngx_str_set(&val, "no");
 #endif /* NGX_ZLIB */
             break;
+        case NGX_HTTP_INFO_KEY_SPDY_ENABLED:
+#if NGX_HTTP_SPDY
+            ngx_str_set(&val, "yes");
+#else
+            ngx_str_set(&val, "no");
+#endif /* NGX_HTTP_SPDY */
+            break;
+#if NGX_HTTP_SPDY
+        case NGX_HTTP_INFO_KEY_SPDY_VERSION:
+  #if NGX_SPDY_VERSION == 2
+    #ifdef TLSEXT_TYPE_next_proto_neg
+            ngx_str_set(&val, NGX_SPDY_NPN_NEGOTIATED);
+    #else /* TLSEXT_TYPE_next_proto_neg */
+            ngx_str_set(&val, "2");
+    #endif /* TLSEXT_TYPE_next_proto_neg */
+  #else /* NGX_SPDY_VERSION == 2 */
+            ngx_str_set(&val, NGX_SPDY_NPN_NEGOTIATED);
+  #endif /* NGX_SPDY_VERSION == 2 */
+            break;
+#endif /* NGX_HTTP_SPDY */
+#ifdef NGX_USER
+        case NGX_HTTP_INFO_KEY_NGX_USER:
+            ngx_str_set(&val, NGX_USER);
+            break;
+#endif /* NGX_USER */
+#ifdef NGX_GROUP
+        case NGX_HTTP_INFO_KEY_NGX_GROUP:
+            ngx_str_set(&val, NGX_GROUP);
+            break;
+#endif /* NGX_GROUP */
 #ifdef NGX_COMPILER
         case NGX_HTTP_INFO_KEY_BUILT_COMPILER:
             ngx_str_set(&val, NGX_COMPILER);
