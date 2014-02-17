@@ -14,3 +14,7 @@ location /info_json {
     nginx_info_format json;
 }
 ```
+
+## TODO
+
+ * detecting embedded modules
