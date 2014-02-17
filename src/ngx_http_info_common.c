@@ -43,6 +43,7 @@ ngx_str_t ngx_http_info_keys[NGX_HTTP_INFO_KEY_MAX] = {
     ngx_string("ssl-enabled"),
     ngx_string("zlib-enabled"),
     ngx_string("http-proxy-enabled"),
+    ngx_string("http-cache-enabled"),
     ngx_string("debug-logging-enabled"),
     ngx_string("spdy-enabled"),
 #if NGX_HTTP_SPDY
