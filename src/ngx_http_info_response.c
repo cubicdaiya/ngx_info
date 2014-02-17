@@ -226,12 +226,26 @@ ngx_int_t ngx_http_info_build_response(ngx_str_t *response, ngx_http_info_respon
             ngx_str_set(&val, "no");
 #endif /* NGX_HTTP_CACHE */
             break;
+        case NGX_HTTP_INFO_KEY_HTTP_STAT_STUB_ENABLED:
+#if NGX_STAT_STUB
+            ngx_str_set(&val, "yes");
+#else
+            ngx_str_set(&val, "no");
+#endif /* NGX_HTTP_STUB */
+            break;
+        case NGX_HTTP_INFO_KEY_HTTP_DAV_ENABLED:
+#if NGX_HTTP_DAV
+            ngx_str_set(&val, "yes");
+#else
+            ngx_str_set(&val, "no");
+#endif /* NGX_HTTP_STUB */
+            break;
         case NGX_HTTP_INFO_KEY_DEBUG_LOGGING_ENABLED:
 #if NGX_DEBUG
             ngx_str_set(&val, "yes");
 #else
             ngx_str_set(&val, "no");
-#endif /* NGX_HTTP_PROXY */
+#endif /* NGX_DEBUG */
             break;
 #ifdef NGX_USER
         case NGX_HTTP_INFO_KEY_NGX_USER:
