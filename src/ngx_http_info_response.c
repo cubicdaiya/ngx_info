@@ -212,13 +212,6 @@ ngx_int_t ngx_http_info_build_response(ngx_str_t *response, ngx_http_info_respon
   #endif /* NGX_SPDY_VERSION == 2 */
             break;
 #endif /* NGX_HTTP_SPDY */
-        case NGX_HTTP_INFO_KEY_HTTP_PROXY_ENABLED:
-#if NGX_HTTP_PROXY
-            ngx_str_set(&val, "yes");
-#else
-            ngx_str_set(&val, "no");
-#endif /* NGX_HTTP_PROXY */
-            break;
         case NGX_HTTP_INFO_KEY_HTTP_CACHE_ENABLED:
 #if NGX_HTTP_CACHE
             ngx_str_set(&val, "yes");
