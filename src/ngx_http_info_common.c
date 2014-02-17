@@ -42,12 +42,14 @@ ngx_str_t ngx_http_info_keys[NGX_HTTP_INFO_KEY_MAX] = {
     ngx_string("pcre-jit-enabled"),
     ngx_string("ssl-enabled"),
     ngx_string("zlib-enabled"),
+    ngx_string("http-proxy-enabled"),
+    ngx_string("debug-logging-enabled"),
     ngx_string("spdy-enabled"),
-    ngx_string("nginx-user"),
-    ngx_string("nginx-group"),
 #if NGX_HTTP_SPDY
     ngx_string("spdy-version"),
 #endif /* NGX_HTTP_SPDY */
+    ngx_string("nginx-user"),
+    ngx_string("nginx-group"),
 #ifdef NGX_COMPILER
     ngx_string("built-compiler"),
 #endif
