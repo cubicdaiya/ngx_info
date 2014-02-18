@@ -240,6 +240,13 @@ ngx_int_t ngx_http_info_build_response(ngx_str_t *response, ngx_http_info_respon
             ngx_str_set(&val, "no");
 #endif /* NGX_DEBUG */
             break;
+        case NGX_HTTP_INFO_KEY_IPV6_ENABLED:
+#if NGX_HAVE_INET6
+            ngx_str_set(&val, "yes");
+#else
+            ngx_str_set(&val, "no");
+#endif /* NGX_DEBUG */
+            break;
 #ifdef NGX_USER
         case NGX_HTTP_INFO_KEY_NGX_USER:
             ngx_str_set(&val, NGX_USER);

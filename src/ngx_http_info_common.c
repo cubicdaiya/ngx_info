@@ -46,6 +46,7 @@ ngx_str_t ngx_http_info_keys[NGX_HTTP_INFO_KEY_MAX] = {
     ngx_string("http-stub-status-enabled"),
     ngx_string("http-dav-enabled"),
     ngx_string("debug-logging-enabled"),
+    ngx_string("ipv6-enabled"),
     ngx_string("spdy-enabled"),
 #if NGX_HTTP_SPDY
     ngx_string("spdy-version"),
