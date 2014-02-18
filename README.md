@@ -28,7 +28,7 @@ Turns on module processing in a surrounding location.
 
 ### nginx_info_format
 
-|Syntax |nginx_info_format <*text \| json*>|
+|Syntax |nginx_info_format <*text or json*>|
 |-------|--------|
 |Default|text|
 |Context|location|
