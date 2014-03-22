@@ -231,7 +231,7 @@ ngx_int_t ngx_http_info_build_response(ngx_str_t *response, ngx_http_info_respon
             ngx_str_set(&val, "yes");
 #else
             ngx_str_set(&val, "no");
-#endif /* NGX_HTTP_STUB */
+#endif /* NGX_HTTP_DAV */
             break;
         case NGX_HTTP_INFO_KEY_DEBUG_LOGGING_ENABLED:
 #if NGX_DEBUG
@@ -245,7 +245,7 @@ ngx_int_t ngx_http_info_build_response(ngx_str_t *response, ngx_http_info_respon
             ngx_str_set(&val, "yes");
 #else
             ngx_str_set(&val, "no");
-#endif /* NGX_DEBUG */
+#endif /* NGX_HAVE_INET6 */
             break;
 #ifdef NGX_USER
         case NGX_HTTP_INFO_KEY_NGX_USER:
